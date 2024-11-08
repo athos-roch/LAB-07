@@ -24,50 +24,63 @@ evals<-read.csv("data/evals.csv", row.names=1)
 1.  Visualize the distribution of `score` in the dataframe `evals`.
 
 ```{r viz-score}
-# add code here
+evals |> 
+  ggplot(aes(score)) +
+  geom_bar()
+
+evals |> 
+  summarise(
+    avg_score = mean(score, na.rm = TRUE),
+    med_score = median(score, na.rm = TRUE)
+  )
 ```
 
-*Add your other details and narratives here.*
+The distribution is left skewed. Courses are on average rated higher and we can see this clearly as the median is 4.3. I would not expect this big of skew. I would expect most courses to be rated at values around 2.5 .
 
 2.  Visualize and describe the relationship between `score` and `bty_avg` using `geom_point()` to represent the data. 
 
 ```{r scatterplot}
-# add code here
+evals |> 
+  ggplot(aes(score, bty_avg, color = gender)) +
+  geom_jitter()
 ```
 
-*Add your narrative and other details here.*
+Jitter creates a small area around points should any points overlap with each other. We cant see any overlapping points. 
 
 # Exercise 2: Simple Linear regression with a numerical predictor
 
 1. Fit a linear model called `score_bty_fit` to predict average professor evaluation `score` from average beauty rating (`bty_avg`). Print the regression output using `tidy()`.
 
-```{r fit-score_bty_fit, eval = FALSE}
+```{r fit-score_bty_fit}
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(___ ~ ___, data = ___)
+  fit(score ~ bty_avg, data = evals)
 ```
 
-```{r tidy-score_bty_fit, eval = FALSE}
+```{r tidy-score_bty_fit}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-tidy(___)
+tidy(score_bty_fit)
 ```
 
 *Add your linear model here. Don't worry too much about notation, you can use things like score-hat.*
 
 2. Plot the data again using `geom_jitter()`, and add the regression line.
 
-```{r viz-score_bty_fit,eval=FALSE}
-# add your plot here. Hint, you can add the regression line using geom_smooth()
+```{r viz-score_bty_fit}
+evals |> 
+  ggplot(aes(bty_avg, score)) +
+  geom_jitter() +
+  geom_smooth(method = "lm", se = FALSE)
 ```
 
 3. Interpret the slope of the linear model in context of the data.
 
-*Add your interpretation here*
+We can see by the slope that as the beauty average increase so does the score. So if you are rated higher on your beauty your course is more likely to get a higher score.
 
 4. Interpret the intercept of the linear model in context of the data. Comment on whether or not the intercept makes sense in this context.
 
-*Add your interpretation here*
+For every one unit of increase in bty_avg we see that the score of a course increases by 0.066 which is the gradient of the slope. 
 
 5. Determine the $R^2$ of the model and interpret it in the context of the data.
 
